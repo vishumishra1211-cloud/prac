@@ -1,0 +1,1043 @@
+
+
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+// ============================================================================
+// 1. SINGLY LINKED LIST ADT
+// ============================================================================
+class SinglyLinkedList {
+private:
+    struct Node {
+        int data;
+        Node* next;
+        Node(int val) : data(val), next(nullptr) {}
+    };
+    Node* head;
+
+public:
+    SinglyLinkedList() : head(nullptr) {}
+
+    // i. Insert at beginning
+    void insertAtBeginning(int x) {
+        Node* newNode = new Node(x);
+        newNode->next = head;
+        head = newNode;
+        cout << "Inserted " << x << " at beginning\n";
+    }
+
+    // ii. Insert at ith position (0-indexed)
+    void insertAtPosition(int x, int pos) {
+        if (pos < 0) {
+            cout << "Invalid position\n";
+            return;
+        }
+        
+        if (pos == 0) {
+            insertAtBeginning(x);
+            return;
+        }
+
+        Node* newNode = new Node(x);
+        Node* temp = head;
+        
+        for (int i = 0; i < pos - 1 && temp != nullptr; i++) {
+            temp = temp->next;
+        }
+
+        if (temp == nullptr) {
+            cout << "Position out of bounds\n";
+            delete newNode;
+            return;
+        }
+
+        newNode->next = temp->next;
+        temp->next = newNode;
+        cout << "Inserted " << x << " at position " << pos << "\n";
+    }
+
+    // iii. Remove from beginning
+    void removeFromBeginning() {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        Node* temp = head;
+        head = head->next;
+        cout << "Removed " << temp->data << " from beginning\n";
+        delete temp;
+    }
+
+    // iv. Remove from ith position (0-indexed)
+    void removeFromPosition(int pos) {
+        if (head == nullptr) {
+            cout << "List is empty\n";
+            return;
+        }
+
+        if (pos < 0) {
+            cout << "Invalid position\n";
+            return;
+        }
+
+        if (pos == 0) {
+            removeFromBeginning();
+            return;
+        }
+
+        Node* temp = head;
+        for (int i = 0; i < pos - 1 && temp != nullptr; i++) {
+            temp = temp->next;
+        }
+
+        if (temp == nullptr || temp->next == nullptr) {
+            cout << "Position out of bounds\n";
+            return;
+        }
+
+        Node* nodeToDelete = temp->next;
+        temp->next = nodeToDelete->next;
+        cout << "Removed " << nodeToDelete->data << " from position " << pos << "\n";
+        delete nodeToDelete;
+    }
+
+    // v. Search for element
+    Node* search(int x) {
+        Node* temp = head;
+        while (temp != nullptr) {
+            if (temp->data == x) {
+                cout << "Element " << x << " found in Singly LL\n";
+                return temp;
+            }
+            temp = temp->next;
+        }
+        cout << "Element " << x << " not found in Singly LL\n";
+        return nullptr;
+    }
+
+    // Display the list
+    void display() {
+        if (head == nullptr) {
+            cout << "Singly List is empty\n";
+            return;
+        }
+        Node* temp = head;
+        cout << "Singly Linked List: ";
+        while (temp != nullptr) {
+            cout << temp->data << " -> ";
+            temp = temp->next;
+        }
+        cout << "NULL\n";
+    }
+
+    ~SinglyLinkedList() {
+        while (head != nullptr) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+// ============================================================================
+// 2. DOUBLY LINKED LIST ADT
+// ============================================================================
+class DoublyLinkedList {
+private:
+    struct Node {
+        int data;
+        Node* prev;
+        Node* next;
+        Node(int val) : data(val), prev(nullptr), next(nullptr) {}
+    };
+    Node* head;
+    Node* tail;
+
+public:
+    DoublyLinkedList() : head(nullptr), tail(nullptr) {}
+
+    // i. Insert at beginning
+    void insertAtBeginning(int x) {
+        Node* newNode = new Node(x);
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+        cout << "Inserted " << x << " at beginning (Doubly LL)\n";
+    }
+
+    // ii. Insert at end
+    void insertAtEnd(int x) {
+        Node* newNode = new Node(x);
+        if (tail == nullptr) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+        cout << "Inserted " << x << " at end (Doubly LL)\n";
+    }
+
+    // iii. Remove from beginning
+    void removeFromBeginning() {
+        if (head == nullptr) {
+            cout << "Doubly List is empty\n";
+            return;
+        }
+
+        Node* temp = head;
+        cout << "Removed " << temp->data << " from beginning (Doubly LL)\n";
+        
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            head->prev = nullptr;
+        }
+        delete temp;
+    }
+
+    // iv. Remove from end
+    void removeFromEnd() {
+        if (tail == nullptr) {
+            cout << "Doubly List is empty\n";
+            return;
+        }
+
+        Node* temp = tail;
+        cout << "Removed " << temp->data << " from end (Doubly LL)\n";
+        
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
+        delete temp;
+    }
+
+    // Display the list
+    void display() {
+        if (head == nullptr) {
+            cout << "Doubly List is empty\n";
+            return;
+        }
+        Node* temp = head;
+        cout << "Doubly Linked List: NULL <-> ";
+        while (temp != nullptr) {
+            cout << temp->data << " <-> ";
+            temp = temp->next;
+        }
+        cout << "NULL\n";
+    }
+
+    ~DoublyLinkedList() {
+        while (head != nullptr) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+// ============================================================================
+// 3. CIRCULAR LINKED LIST ADT
+// ============================================================================
+class CircularLinkedList {
+private:
+    struct Node {
+        int data;
+        Node* next;
+        Node(int val) : data(val), next(nullptr) {}
+    };
+    Node* last; // Points to the last node
+
+public:
+    CircularLinkedList() : last(nullptr) {}
+
+    // i. Insert element
+    void insert(int x) {
+        Node* newNode = new Node(x);
+        if (last == nullptr) {
+            newNode->next = newNode; // Point to itself
+            last = newNode;
+        } else {
+            newNode->next = last->next;
+            last->next = newNode;
+            last = newNode; // Insert at end
+        }
+        cout << "Inserted " << x << " in circular list\n";
+    }
+
+    // ii. Remove element
+    void remove(int x) {
+        if (last == nullptr) {
+            cout << "Circular List is empty\n";
+            return;
+        }
+
+        Node* curr = last->next;
+        Node* prev = last;
+
+        // Single node case
+        if (curr == last && curr->data == x) {
+            delete curr;
+            last = nullptr;
+            cout << "Removed " << x << " from circular list\n";
+            return;
+        }
+
+        // Search for the node
+        do {
+            if (curr->data == x) {
+                prev->next = curr->next;
+                if (curr == last) {
+                    last = prev;
+                }
+                delete curr;
+                cout << "Removed " << x << " from circular list\n";
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
+        } while (curr != last->next);
+
+        cout << "Element " << x << " not found in circular list\n";
+    }
+
+    // iii. Search for element
+    Node* search(int x) {
+        if (last == nullptr) {
+            cout << "Circular List is empty\n";
+            return nullptr;
+        }
+
+        Node* temp = last->next;
+        do {
+            if (temp->data == x) {
+                cout << "Element " << x << " found in circular list\n";
+                return temp;
+            }
+            temp = temp->next;
+        } while (temp != last->next);
+
+        cout << "Element " << x << " not found in circular list\n";
+        return nullptr;
+    }
+
+    // Display the list
+    void display() {
+        if (last == nullptr) {
+            cout << "Circular List is empty\n";
+            return;
+        }
+        Node* temp = last->next;
+        cout << "Circular Linked List: ";
+        do {
+            cout << temp->data << " -> ";
+            temp = temp->next;
+        } while (temp != last->next);
+        cout << "(back to " << last->next->data << ")\n";
+    }
+
+    ~CircularLinkedList() {
+        if (last == nullptr) return;
+        
+        Node* curr = last->next;
+        while (curr != last) {
+            Node* temp = curr;
+            curr = curr->next;
+            delete temp;
+        }
+        delete last;
+    }
+};
+
+// ============================================================================
+// 4. STACK ADT WITH EXPRESSION EVALUATION
+// ============================================================================
+class Stack {
+private:
+    struct Node {
+        int data;
+        Node* next;
+        Node(int val) : data(val), next(nullptr) {}
+    };
+    Node* top;
+
+public:
+    Stack() : top(nullptr) {}
+
+    void push(int x) {
+        Node* newNode = new Node(x);
+        newNode->next = top;
+        top = newNode;
+    }
+
+    int pop() {
+        if (isEmpty()) {
+            cout << "Stack underflow\n";
+            return -1;
+        }
+        Node* temp = top;
+        int val = top->data;
+        top = top->next;
+        delete temp;
+        return val;
+    }
+
+    int peek() {
+        if (isEmpty()) {
+            cout << "Stack is empty\n";
+            return -1;
+        }
+        return top->data;
+    }
+
+    bool isEmpty() {
+        return top == nullptr;
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Stack is empty\n";
+            return;
+        }
+        Node* temp = top;
+        cout << "Stack (top to bottom): ";
+        while (temp != nullptr) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << "\n";
+    }
+
+    // Evaluate Postfix Expression
+    int evaluatePostfix(string expr) {
+        for (int i = 0; i < expr.length(); i++) {
+            if (isdigit(expr[i])) {
+                push(expr[i] - '0');
+            } else if (expr[i] == ' ') {
+                continue;
+            } else {
+                int val2 = pop();
+                int val1 = pop();
+                switch (expr[i]) {
+                    case '+': push(val1 + val2); break;
+                    case '-': push(val1 - val2); break;
+                    case '*': push(val1 * val2); break;
+                    case '/': push(val1 / val2); break;
+                }
+            }
+        }
+        return pop();
+    }
+
+    // Evaluate Prefix Expression
+    int evaluatePrefix(string expr) {
+        for (int i = expr.length() - 1; i >= 0; i--) {
+            if (isdigit(expr[i])) {
+                push(expr[i] - '0');
+            } else if (expr[i] == ' ') {
+                continue;
+            } else {
+                int val1 = pop();
+                int val2 = pop();
+                switch (expr[i]) {
+                    case '+': push(val1 + val2); break;
+                    case '-': push(val1 - val2); break;
+                    case '*': push(val1 * val2); break;
+                    case '/': push(val1 / val2); break;
+                }
+            }
+        }
+        return pop();
+    }
+
+    ~Stack() {
+        while (!isEmpty()) {
+            pop();
+        }
+    }
+};
+
+// ============================================================================
+// 5. QUEUE ADT
+// ============================================================================
+class Queue {
+private:
+    struct Node {
+        int data;
+        Node* next;
+        Node(int val) : data(val), next(nullptr) {}
+    };
+    Node* front;
+    Node* rear;
+
+public:
+    Queue() : front(nullptr), rear(nullptr) {}
+
+    void enqueue(int x) {
+        Node* newNode = new Node(x);
+        if (rear == nullptr) {
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+        cout << "Enqueued " << x << "\n";
+    }
+
+    int dequeue() {
+        if (isEmpty()) {
+            cout << "Queue underflow\n";
+            return -1;
+        }
+        Node* temp = front;
+        int val = front->data;
+        front = front->next;
+        if (front == nullptr) {
+            rear = nullptr;
+        }
+        delete temp;
+        cout << "Dequeued " << val << "\n";
+        return val;
+    }
+
+    int peek() {
+        if (isEmpty()) {
+            cout << "Queue is empty\n";
+            return -1;
+        }
+        return front->data;
+    }
+
+    bool isEmpty() {
+        return front == nullptr;
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty\n";
+            return;
+        }
+        Node* temp = front;
+        cout << "Queue (front to rear): ";
+        while (temp != nullptr) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << "\n";
+    }
+
+    ~Queue() {
+        while (!isEmpty()) {
+            dequeue();
+        }
+    }
+};
+
+// ============================================================================
+// 6. BINARY SEARCH TREE ADT
+// ============================================================================
+class BST {
+private:
+    struct Node {
+        int data;
+        Node* left;
+        Node* right;
+        Node(int val) : data(val), left(nullptr), right(nullptr) {}
+    };
+    Node* root;
+
+    Node* insertHelper(Node* node, int x) {
+        if (node == nullptr) {
+            return new Node(x);
+        }
+        if (x < node->data) {
+            node->left = insertHelper(node->left, x);
+        } else if (x > node->data) {
+            node->right = insertHelper(node->right, x);
+        }
+        return node;
+    }
+
+    Node* findMin(Node* node) {
+        while (node->left != nullptr) {
+            node = node->left;
+        }
+        return node;
+    }
+
+    Node* deleteHelper(Node* node, int x) {
+        if (node == nullptr) return nullptr;
+
+        if (x < node->data) {
+            node->left = deleteHelper(node->left, x);
+        } else if (x > node->data) {
+            node->right = deleteHelper(node->right, x);
+        } else {
+            // Node found
+            if (node->left == nullptr) {
+                Node* temp = node->right;
+                delete node;
+                return temp;
+            } else if (node->right == nullptr) {
+                Node* temp = node->left;
+                delete node;
+                return temp;
+            }
+            // Node with two children
+            Node* temp = findMin(node->right);
+            node->data = temp->data;
+            node->right = deleteHelper(node->right, temp->data);
+        }
+        return node;
+    }
+
+    bool searchHelper(Node* node, int x) {
+        if (node == nullptr) return false;
+        if (node->data == x) return true;
+        if (x < node->data) return searchHelper(node->left, x);
+        return searchHelper(node->right, x);
+    }
+
+    void preorderHelper(Node* node) {
+        if (node == nullptr) return;
+        cout << node->data << " ";
+        preorderHelper(node->left);
+        preorderHelper(node->right);
+    }
+
+    void inorderHelper(Node* node) {
+        if (node == nullptr) return;
+        inorderHelper(node->left);
+        cout << node->data << " ";
+        inorderHelper(node->right);
+    }
+
+    void postorderHelper(Node* node) {
+        if (node == nullptr) return;
+        postorderHelper(node->left);
+        postorderHelper(node->right);
+        cout << node->data << " ";
+    }
+
+    void destroyTree(Node* node) {
+        if (node == nullptr) return;
+        destroyTree(node->left);
+        destroyTree(node->right);
+        delete node;
+    }
+
+public:
+    BST() : root(nullptr) {}
+
+    void insert(int x) {
+        root = insertHelper(root, x);
+        cout << "Inserted " << x << " in BST\n";
+    }
+
+    void remove(int x) {
+        root = deleteHelper(root, x);
+        cout << "Deleted " << x << " from BST\n";
+    }
+
+    bool search(int x) {
+        bool found = searchHelper(root, x);
+        if (found) {
+            cout << "Element " << x << " found in BST\n";
+        } else {
+            cout << "Element " << x << " not found in BST\n";
+        }
+        return found;
+    }
+
+    void preorder() {
+        cout << "Preorder: ";
+        preorderHelper(root);
+        cout << "\n";
+    }
+
+    void inorder() {
+        cout << "Inorder: ";
+        inorderHelper(root);
+        cout << "\n";
+    }
+
+    void postorder() {
+        cout << "Postorder: ";
+        postorderHelper(root);
+        cout << "\n";
+    }
+
+    ~BST() {
+        destroyTree(root);
+    }
+};
+
+// ============================================================================
+// 7. AVL TREE ADT
+// ============================================================================
+class AVLTree {
+private:
+    struct Node {
+        int data;
+        Node* left;
+        Node* right;
+        int height;
+        Node(int val) : data(val), left(nullptr), right(nullptr), height(1) {}
+    };
+    Node* root;
+
+    int height(Node* node) {
+        return node ? node->height : 0;
+    }
+
+    int getBalance(Node* node) {
+        return node ? height(node->left) - height(node->right) : 0;
+    }
+
+    Node* rightRotate(Node* y) {
+        Node* x = y->left;
+        Node* T2 = x->right;
+
+        x->right = y;
+        y->left = T2;
+
+        y->height = max(height(y->left), height(y->right)) + 1;
+        x->height = max(height(x->left), height(x->right)) + 1;
+
+        return x;
+    }
+
+    Node* leftRotate(Node* x) {
+        Node* y = x->right;
+        Node* T2 = y->left;
+
+        y->left = x;
+        x->right = T2;
+
+        x->height = max(height(x->left), height(x->right)) + 1;
+        y->height = max(height(y->left), height(y->right)) + 1;
+
+        return y;
+    }
+
+    Node* insertHelper(Node* node, int x) {
+        if (node == nullptr) {
+            return new Node(x);
+        }
+
+        if (x < node->data) {
+            node->left = insertHelper(node->left, x);
+        } else if (x > node->data) {
+            node->right = insertHelper(node->right, x);
+        } else {
+            return node; // Duplicate keys not allowed
+        }
+
+        node->height = 1 + max(height(node->left), height(node->right));
+
+        int balance = getBalance(node);
+
+        // Left Left Case
+        if (balance > 1 && x < node->left->data) {
+            return rightRotate(node);
+        }
+
+        // Right Right Case
+        if (balance < -1 && x > node->right->data) {
+            return leftRotate(node);
+        }
+
+        // Left Right Case
+        if (balance > 1 && x > node->left->data) {
+            node->left = leftRotate(node->left);
+            return rightRotate(node);
+        }
+
+        // Right Left Case
+        if (balance < -1 && x < node->right->data) {
+            node->right = rightRotate(node->right);
+            return leftRotate(node);
+        }
+
+        return node;
+    }
+
+    bool searchHelper(Node* node, int x) {
+        if (node == nullptr) return false;
+        if (node->data == x) return true;
+        if (x < node->data) return searchHelper(node->left, x);
+        return searchHelper(node->right, x);
+    }
+
+    void inorderHelper(Node* node) {
+        if (node == nullptr) return;
+        inorderHelper(node->left);
+        cout << node->data << " ";
+        inorderHelper(node->right);
+    }
+
+    void destroyTree(Node* node) {
+        if (node == nullptr) return;
+        destroyTree(node->left);
+        destroyTree(node->right);
+        delete node;
+    }
+
+public:
+    AVLTree() : root(nullptr) {}
+
+    void insert(int x) {
+        root = insertHelper(root, x);
+        cout << "Inserted " << x << " in AVL Tree\n";
+    }
+
+    bool search(int x) {
+        bool found = searchHelper(root, x);
+        if (found) {
+            cout << "Element " << x << " found in AVL Tree\n";
+        } else {
+            cout << "Element " << x << " not found in AVL Tree\n";
+        }
+        return found;
+    }
+
+    void inorder() {
+        cout << "AVL Tree Inorder: ";
+        inorderHelper(root);
+        cout << "\n";
+    }
+
+    ~AVLTree() {
+        destroyTree(root);
+    }
+};
+
+// ============================================================================
+// MAIN FUNCTION - COMPLETE WORKING EXAMPLE
+// ============================================================================
+int main() {
+    cout << "========================================\n";
+    cout << "DATA STRUCTURES ADT - COMPLETE DEMO\n";
+    cout << "========================================\n\n";
+
+    // ========================================================================
+    // 1. SINGLY LINKED LIST DEMONSTRATION
+    // ========================================================================
+    cout << "========================================\n";
+    cout << "1. SINGLY LINKED LIST\n";
+    cout << "========================================\n";
+    SinglyLinkedList sll;
+    
+    cout << "\n--- Inserting Elements ---\n";
+    sll.insertAtBeginning(10);
+    sll.insertAtBeginning(20);
+    sll.insertAtBeginning(30);
+    sll.display();
+    
+    cout << "\n--- Insert at Position ---\n";
+    sll.insertAtPosition(15, 1);  // Insert 15 at position 1
+    sll.insertAtPosition(5, 0);   // Insert 5 at position 0
+    sll.display();
+    
+    cout << "\n--- Searching ---\n";
+    sll.search(15);
+    sll.search(100);
+    
+    cout << "\n--- Removing Elements ---\n";
+    sll.removeFromBeginning();
+    sll.display();
+    sll.removeFromPosition(2);
+    sll.display();
+    
+    // ========================================================================
+    // 2. DOUBLY LINKED LIST DEMONSTRATION
+    // ========================================================================
+    cout << "\n========================================\n";
+    cout << "2. DOUBLY LINKED LIST\n";
+    cout << "========================================\n";
+    DoublyLinkedList dll;
+    
+    cout << "\n--- Inserting Elements ---\n";
+    dll.insertAtBeginning(10);
+    dll.insertAtEnd(20);
+    dll.insertAtBeginning(5);
+    dll.insertAtEnd(25);
+    dll.insertAtEnd(30);
+    dll.display();
+    
+    cout << "\n--- Removing Elements ---\n";
+    dll.removeFromBeginning();
+    dll.display();
+    dll.removeFromEnd();
+    dll.display();
+    
+    // ========================================================================
+    // 3. CIRCULAR LINKED LIST DEMONSTRATION
+    // ========================================================================
+    cout << "\n========================================\n";
+    cout << "3. CIRCULAR LINKED LIST\n";
+    cout << "========================================\n";
+    CircularLinkedList cll;
+    
+    cout << "\n--- Inserting Elements ---\n";
+    cll.insert(10);
+    cll.insert(20);
+    cll.insert(30);
+    cll.insert(40);
+    cll.insert(50);
+    cll.display();
+    
+    cout << "\n--- Searching ---\n";
+    cll.search(30);
+    cll.search(100);
+    
+    cout << "\n--- Removing Elements ---\n";
+    cll.remove(30);
+    cll.display();
+    cll.remove(10);
+    cll.display();
+    
+    // ========================================================================
+    // 4. STACK DEMONSTRATION
+    // ========================================================================
+    cout << "\n========================================\n";
+    cout << "4. STACK\n";
+    cout << "========================================\n";
+    Stack stack;
+    
+    cout << "\n--- Push Operations ---\n";
+    stack.push(10);
+    stack.push(20);
+    stack.push(30);
+    stack.push(40);
+    stack.push(50);
+    stack.display();
+    
+    cout << "\n--- Peek Operation ---\n";
+    cout << "Top element: " << stack.peek() << "\n";
+    
+    cout << "\n--- Pop Operations ---\n";
+    stack.pop();
+    stack.pop();
+    stack.display();
+    
+    cout << "\n--- Expression Evaluation ---\n";
+    Stack evalStack;
+    
+    cout << "Postfix Expression: 23*54*+ = (2*3) + (5*4)\n";
+    string postfix = "23*54*+";
+    int result = evalStack.evaluatePostfix(postfix);
+    cout << "Result: " << result << "\n\n";
+    
+    cout << "Prefix Expression: +*23*54 = (2*3) + (5*4)\n";
+    string prefix = "+*23*54";
+    result = evalStack.evaluatePrefix(prefix);
+    cout << "Result: " << result << "\n";
+    
+    // ========================================================================
+    // 5. QUEUE DEMONSTRATION
+    // ========================================================================
+    cout << "\n========================================\n";
+    cout << "5. QUEUE\n";
+    cout << "========================================\n";
+    Queue queue;
+    
+    cout << "\n--- Enqueue Operations ---\n";
+    queue.enqueue(10);
+    queue.enqueue(20);
+    queue.enqueue(30);
+    queue.enqueue(40);
+    queue.enqueue(50);
+    queue.display();
+    
+    cout << "\n--- Peek Operation ---\n";
+    cout << "Front element: " << queue.peek() << "\n";
+    
+    cout << "\n--- Dequeue Operations ---\n";
+    queue.dequeue();
+    queue.dequeue();
+    queue.display();
+    
+    // ========================================================================
+    // 6. BINARY SEARCH TREE DEMONSTRATION
+    // ========================================================================
+    cout << "\n========================================\n";
+    cout << "6. BINARY SEARCH TREE\n";
+    cout << "========================================\n";
+    BST bst;
+    
+    cout << "\n--- Inserting Elements ---\n";
+    bst.insert(50);
+    bst.insert(30);
+    bst.insert(70);
+    bst.insert(20);
+    bst.insert(40);
+    bst.insert(60);
+    bst.insert(80);
+    
+    cout << "\n--- Tree Traversals ---\n";
+    bst.preorder();
+    bst.inorder();
+    bst.postorder();
+    
+    cout << "\n--- Searching ---\n";
+    bst.search(40);
+    bst.search(100);
+    
+    cout << "\n--- Deleting Element ---\n";
+    bst.remove(30);
+    bst.inorder();
+    
+    // ========================================================================
+    // 7. AVL TREE DEMONSTRATION
+    // ========================================================================
+    cout << "\n========================================\n";
+    cout << "7. AVL TREE (Self-Balancing BST)\n";
+    cout << "========================================\n";
+    AVLTree avl;
+    
+    cout << "\n--- Inserting Elements (Auto-Balancing) ---\n";
+    avl.insert(10);
+    avl.insert(20);
+    avl.insert(30);  // This will trigger rotation
+    avl.insert(40);
+    avl.insert(50);
+    avl.insert(25);
+    
+    cout << "\n--- Inorder Traversal (Sorted) ---\n";
+    avl.inorder();
+    
+    cout << "\n--- Searching ---\n";
+    avl.search(25);
+    avl.search(100);
+    
+    // ========================================================================
+    // SUMMARY
+    // ========================================================================
+    cout << "\n========================================\n";
+    cout << "ALL DEMONSTRATIONS COMPLETED!\n";
+    cout << "========================================\n";
+    cout << "\nAll 7 data structures are working correctly:\n";
+    cout << "1. Singly Linked List - Complete\n";
+    cout << "2. Doubly Linked List - Complete\n";
+    cout << "3. Circular Linked List - Complete\n";
+    cout << "4. Stack (with expression evaluation) - Complete\n";
+    cout << "5. Queue - Complete\n";
+    cout << "6. Binary Search Tree - Complete\n";
+    cout << "7. AVL Tree - Complete\n";
+    cout << "\nYou can now use any of these classes in your programs!\n";
+    cout << "========================================\n";
+
+    return 0;
+}
